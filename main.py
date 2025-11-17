@@ -1,9 +1,8 @@
-#import module
+# Import the pygame module
 import pygame
 
-#importing pygame.locals for easy access to key coords
-#flake8 and blk standards
-
+# Import pygame.locals for easier access to key coordinates
+# Updated to conform to flake8 and black standards
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -11,47 +10,53 @@ from pygame.locals import (
     K_RIGHT,
     K_ESCAPE,
     KEYDOWN,
-    QUIT
+    QUIT,
 )
 
-#init game
-pygame.init()
-
-#def constants for screen width and height
-SCREEN_WIDTH  = 800
+# Define constants for the screen width and height
+SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-#Create screen obj
+# Define a player object by extending pygame.sprite.Sprite
+# The surface drawn on the screen is now an attribute of 'player'
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Player, self).__init__()
+        self.surf = pygame.Surface((75, 25))
+        self.surf.fill((255, 255, 255))
+        self.rect = self.surf.get_rect()
+
+# Initialize pygame
+pygame.init()
+
+# Create the screen object
+# The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+# Instantiate player. Right now, this is just a rectangle.
+player = Player()
 
-#keep main loop running
+# Variable to keep the main loop running
 running = True
 
-#Main loop 
+# Main loop
 while running:
-    #check all events in queue
+    # for loop through the event queue
     for event in pygame.event.get():
-        #keypress?
+        # Check for KEYDOWN event
         if event.type == KEYDOWN:
-            #ESC key? Stop loop
+            # If the Esc key is pressed, then exit the main loop
             if event.key == K_ESCAPE:
                 running = False
-
-        #Did the user click the close window button? STOP
+        # Check for QUIT event. If QUIT, then set running to false.
         elif event.type == QUIT:
             running = False
 
-    #fill screen with white
-    screen.fill((255, 255, 255))
+    # Fill the screen with black
+    screen.fill((0, 0, 0))
 
-    #Surface with a tuple containing LxW
-    surf = pygame.Surface((50, 50))
+    # Draw the player on the screen
+    screen.blit(player.surf, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
 
-    # #give surface color to separate it from BG
-    surf.fill((0, 0, 0))
-    rect = surf.get_rect()
-
-    # #blitting surface onto another surface for visability 
-    screen.blit(surf, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    # Update the display
     pygame.display.flip()
