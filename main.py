@@ -22,7 +22,7 @@ SCREEN_WIDTH  = 800
 SCREEN_HEIGHT = 600
 
 #Create screen obj
-screen = pygame.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 
 #keep main loop running
@@ -41,3 +41,17 @@ while running:
         #Did the user click the close window button? STOP
         elif event.type == QUIT:
             running = False
+
+    #fill screen with white
+    screen.fill((255, 255, 255))
+
+    #Surface with a tuple containing LxW
+    surf = pygame.Surface((50, 50))
+
+    # #give surface color to separate it from BG
+    surf.fill((0, 0, 0))
+    rect = surf.get_rect()
+
+    # #blitting surface onto another surface for visability 
+    screen.blit(surf, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    pygame.display.flip()
