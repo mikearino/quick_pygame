@@ -26,6 +26,25 @@ class Player(pygame.sprite.Sprite):
         self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect()
 
+    def update(self, pressed_keys):
+        if pressed_keys[K_UP]:
+            self.rect.move_ip(0, -5)
+        if pressed_keys[K_DOWN]:
+            self.rect.move_ip(0, 5)
+        if pressed_keys[K_LEFT]:
+            self.rect.move_ip(-5, 0)
+        if pressed_keys[K_RIGHT]:
+            self.rect.move_ip(5, 0)
+    
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > SCREEN_WIDTH:
+            self.rect.right = SCREEN_WIDTH
+        if self.rect.top <= 0:
+            self.rect.top = 0
+        if self.rect.bottom >= SCREEN_HEIGHT:
+            self.rect.bottom = SCREEN_HEIGHT
+
 # Initialize pygame
 pygame.init()
 
@@ -43,6 +62,7 @@ running = True
 while running:
     # for loop through the event queue
     for event in pygame.event.get():
+        #Get the set of keys pressed and check for user input
         # Check for KEYDOWN event
         if event.type == KEYDOWN:
             # If the Esc key is pressed, then exit the main loop
@@ -52,11 +72,16 @@ while running:
         elif event.type == QUIT:
             running = False
 
+    pressed_keys = pygame.key.get_pressed()
+
+    #Update player sprite based on keypress
+    player.update(pressed_keys)
+
     # Fill the screen with black
     screen.fill((0, 0, 0))
 
     # Draw the player on the screen
-    screen.blit(player.surf, (SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
+    screen.blit(player.surf, player.rect)
 
     # Update the display
     pygame.display.flip()
