@@ -27,6 +27,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
         self.surf = pygame.image.load("jet.png")
+        self.surf = pygame.transform.scale(self.surf, (60, 30))
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
 
@@ -98,8 +99,11 @@ pygame.mixer.init()
 
 # Load and play background music
 # Sound source: youtube.com
-# License: youtube audio library license
-pygame.mixer.music.load("Robot City - Quincas Moreira.mp3")
+# License: 8-Bit March by Twin Musicom is 
+# licensed under a Creative Commons Attribution 4.0 license. 
+# https://creativecommons.org/licenses/by/4.0/
+#Artist: http://www.twinmusicom.org/
+pygame.mixer.music.load("8-Bit March - Twin Musicom.mp3")
 pygame.mixer.music.play(loops=-1)
 
 # Load all sound files
@@ -194,7 +198,7 @@ while running:
         move_up_sound.stop()
         move_down_sound.stop()
         collision_sound.play()
-
+        pygame.time.delay(500)   # play for 1 second (adjust as needed)
         #stop the loop
         running = False
 
