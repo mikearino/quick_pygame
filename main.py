@@ -1,6 +1,9 @@
 # Import the pygame module
 import pygame
 
+#import random for rando numbers
+import random
+
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
 from pygame.locals import (
@@ -45,6 +48,28 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
 
+# Define the enemy object by extending pygame.sprite.Sprite
+# The surface you draw on the screen is now an attribute of 'enemy'
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Enemy, self).__init__()
+        self.surf = pygame.Surface((20, 10))
+        self.surf.fill((255, 255, 255))
+        self.rect = self.surf.get_rect(
+            center=(
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT),
+            )
+        )          
+        self.speed = random.randint(5, 20)
+
+#Move sprite base on speed
+#Remove sprite when it passes the left edge of the screen
+    def update(self):
+        self.rect.move_ip(-self.speed, 0)
+        if self.rect.right < 0:
+            self.kill()
+
 # Initialize pygame
 pygame.init()
 
@@ -52,8 +77,19 @@ pygame.init()
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+#Custom event for adding new enemy
+ADDENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(ADDENEMY, 250)
+
 # Instantiate player. Right now, this is just a rectangle.
 player = Player()
+
+#Create groups to hold enemy sprites and all sprites
+# enemenies is used for collision detectiona and position update
+#all sprites used for rendering
+enemies = pygame.sprite.Group()
+all_sprites = pygame.sprite.Group()
+all_sprites.add(player)
 
 # Variable to keep the main loop running
 running = True
@@ -72,16 +108,30 @@ while running:
         elif event.type == QUIT:
             running = False
 
-    pressed_keys = pygame.key.get_pressed()
+        #Add a new enemy
+        elif event.type == ADDENEMY:
+            #Create the new enemy and add it to sprite groups
+            new_enemy = Enemy()
+            enemies.add(new_enemy)
+            all_sprites.add(new_enemy)
 
     #Update player sprite based on keypress
+    pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
+
+    #Update enemy position
+    enemies.update()
 
     # Fill the screen with black
     screen.fill((0, 0, 0))
+
+        #Draw all sprites
+    for entity in all_sprites:
+        screen.blit(entity.surf, entity.rect)
 
     # Draw the player on the screen
     screen.blit(player.surf, player.rect)
 
     # Update the display
     pygame.display.flip()
+
