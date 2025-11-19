@@ -54,8 +54,8 @@ class Player(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
-        self.surf = pygame.image.load("missile.png").convert()
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.surf = pygame.image.load("missile.png").convert_alpha()
+        self.surf = pygame.transform.scale(self.surf, (30, 20))
         self.rect = self.surf.get_rect(
             center=(
                 random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
@@ -92,6 +92,21 @@ class Cloud(pygame.sprite.Sprite):
         self.rect.move_ip(-5, 0)
         if self.rect.right < 0:
             self.kill()
+
+#set up for sound
+pygame.mixer.init()
+
+# Load and play background music
+# Sound source: youtube.com
+# License: youtube audio library license
+pygame.mixer.music.load("Robot City - Quincas Moreira.mp3")
+pygame.mixer.music.play(loops=-1)
+
+# Load all sound files
+# Sound sources: Jon Fincher
+move_up_sound = pygame.mixer.Sound("one.wav")
+move_down_sound = pygame.mixer.Sound("two.wav")
+collision_sound = pygame.mixer.Sound("Collision.ogg")
 
 # Initialize pygame
 pygame.init()
@@ -130,6 +145,10 @@ while running:
         #Get the set of keys pressed and check for user input
         # Check for KEYDOWN event
         if event.type == KEYDOWN:
+            if event.key == K_UP:
+                move_up_sound.play()
+            if event.key == K_DOWN:
+                move_down_sound.play()
             # If the Esc key is pressed, then exit the main loop
             if event.key == K_ESCAPE:
                 running = False
@@ -168,8 +187,15 @@ while running:
 
     #Check if any enemies have collided with player
     if pygame.sprite.spritecollideany(player, enemies):
-        #if so remove player and stop loop
+        #if so remove player
         player.kill()
+
+        # Stop any moving sounds and play the collision sound
+        move_up_sound.stop()
+        move_down_sound.stop()
+        collision_sound.play()
+
+        #stop the loop
         running = False
 
     # Draw the player on the screen
@@ -179,4 +205,8 @@ while running:
     pygame.display.flip()
 
     #force program to maintian 30 fps
-    clock.tick(40)
+    clock.tick(25)
+
+# All done! Stop and quit the mixer.
+pygame.mixer.music.stop()
+pygame.mixer.quit()
